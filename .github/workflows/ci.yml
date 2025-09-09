@@ -119,3 +119,62 @@ jobs:
         else
           echo "✅ All linting checks passed!"
         fi
+    
+    - name: Post PR comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const flake8Status = '${{ steps.flake8.outcome }}';
+          const blackStatus = '${{ steps.black.outcome }}';
+          const isortStatus = '${{ steps.isort.outcome }}';
+          const pydocstyleStatus = '${{ steps.pydocstyle.outcome }}';
+          const mypyStatus = '${{ steps.mypy.outcome }}';
+          const docstringsStatus = '${{ steps.docstrings.outcome }}';
+          
+          const getStatusIcon = (status) => {
+            if (status === 'success') return '✅';
+            if (status === 'failure') return '❌';
+            if (status === 'skipped') return '⏭️';
+            return '❓';
+          };
+          
+          const getStatusText = (status) => {
+            if (status === 'success') return 'success';
+            if (status === 'failure') return 'failure';
+            if (status === 'skipped') return 'skipped';
+            return 'unknown';
+          };
+          
+          const comment = `## Code Quality Check
+          
+          | Tool | Result |
+          |------|--------|
+          | **flake8** | ${getStatusIcon(flake8Status)} ${getStatusText(flake8Status)} |
+          | **black** | ${getStatusIcon(blackStatus)} ${getStatusText(blackStatus)} |
+          | **isort** | ${getStatusIcon(isortStatus)} ${getStatusText(isortStatus)} |
+          | **pydocstyle** | ${getStatusIcon(pydocstyleStatus)} ${getStatusText(pydocstyleStatus)} |
+          | **mypy** | ${getStatusIcon(mypyStatus)} ${getStatusText(mypyStatus)} |
+          | **docstrings** | ${getStatusIcon(docstringsStatus)} ${getStatusText(docstringsStatus)} |
+          
+          <details>
+          <summary>View Details</summary>
+          
+          ### Linting Results
+          - **flake8**: Code style and syntax checking
+          - **black**: Code formatting
+          - **isort**: Import sorting
+          - **pydocstyle**: Docstring style checking
+          - **mypy**: Type checking
+          - **docstrings**: Function docstring validation
+          
+          </details>
+          
+          *Pushed by @${{ github.actor }}*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
