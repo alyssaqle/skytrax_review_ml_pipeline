@@ -73,3 +73,9 @@ urllib3==2.5.0
 wcwidth==0.2.13
 wheel==0.45.1
 xgboost==3.0.5
+# Linting and code quality tools
+flake8==7.0.0
+black==24.10.0
+isort==5.13.2
+pydocstyle==6.3.0
+mypy==1.8.0
