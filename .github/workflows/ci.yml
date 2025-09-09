@@ -1,0 +1,189 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install flake8 "black[jupyter]" isort pydocstyle mypy
+    
+    - name: Lint with flake8
+      id: flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      continue-on-error: true
+    
+    - name: Check code formatting with black
+      id: black
+      run: |
+        black --check --diff .
+      continue-on-error: true
+    
+    - name: Check import sorting with isort
+      id: isort
+      run: |
+        isort --check-only --diff .
+      continue-on-error: true
+    
+    - name: Check docstrings with pydocstyle
+      id: pydocstyle
+      run: |
+        pydocstyle --convention=google src/
+      continue-on-error: true
+    
+    - name: Type check with mypy
+      id: mypy
+      run: |
+        mypy src/ --ignore-missing-imports
+      continue-on-error: true
+    
+    - name: Check for missing docstrings in functions
+      id: docstrings
+      run: |
+        python -c "
+        import ast
+        import os
+        
+        def check_docstrings(filepath):
+            with open(filepath, 'r') as f:
+                try:
+                    tree = ast.parse(f.read())
+                except SyntaxError:
+                    return
+                
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.FunctionDef):
+                        if not ast.get_docstring(node):
+                            print(f'Missing docstring in function {node.name} at {filepath}:{node.lineno}')
+                            exit(1)
+        
+        for root, dirs, files in os.walk('src'):
+            for file in files:
+                if file.endswith('.py'):
+                    check_docstrings(os.path.join(root, file))
+        "
+      continue-on-error: true
+    
+    - name: Check overall results
+      id: overall
+      run: |
+        echo "## Linting Results Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| flake8 | ${{ steps.flake8.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| black | ${{ steps.black.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| isort | ${{ steps.isort.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| pydocstyle | ${{ steps.pydocstyle.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| mypy | ${{ steps.mypy.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| docstrings | ${{ steps.docstrings.outcome }} |" >> $GITHUB_STEP_SUMMARY
+        
+        # Check if any step failed
+        if [[ "${{ steps.flake8.outcome }}" == "failure" || 
+              "${{ steps.black.outcome }}" == "failure" || 
+              "${{ steps.isort.outcome }}" == "failure" || 
+              "${{ steps.pydocstyle.outcome }}" == "failure" || 
+              "${{ steps.mypy.outcome }}" == "failure" || 
+              "${{ steps.docstrings.outcome }}" == "failure" ]]; then
+          echo "❌ Some linting checks failed. Please fix the issues above."
+          exit 1
+        else
+          echo "✅ All linting checks passed!"
+        fi
+      continue-on-error: true
+    
+    - name: Post PR comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const flake8Status = '${{ steps.flake8.outcome }}';
+          const blackStatus = '${{ steps.black.outcome }}';
+          const isortStatus = '${{ steps.isort.outcome }}';
+          const pydocstyleStatus = '${{ steps.pydocstyle.outcome }}';
+          const mypyStatus = '${{ steps.mypy.outcome }}';
+          const docstringsStatus = '${{ steps.docstrings.outcome }}';
+          const overallStatus = '${{ steps.overall.outcome }}';
+          
+          const getStatusIcon = (status) => {
+            if (status === 'success') return '✅';
+            if (status === 'failure') return '❌';
+            if (status === 'skipped') return '⏭️';
+            return '❓';
+          };
+          
+          const getStatusText = (status) => {
+            if (status === 'success') return 'success';
+            if (status === 'failure') return 'failure';
+            if (status === 'skipped') return 'skipped';
+            return 'unknown';
+          };
+          
+          const comment = `## Code Quality Check
+          
+          | Tool | Result |
+          |------|--------|
+          | **flake8** | ${getStatusIcon(flake8Status)} ${getStatusText(flake8Status)} |
+          | **black** | ${getStatusIcon(blackStatus)} ${getStatusText(blackStatus)} |
+          | **isort** | ${getStatusIcon(isortStatus)} ${getStatusText(isortStatus)} |
+          | **pydocstyle** | ${getStatusIcon(pydocstyleStatus)} ${getStatusText(pydocstyleStatus)} |
+          | **mypy** | ${getStatusIcon(mypyStatus)} ${getStatusText(mypyStatus)} |
+          | **docstrings** | ${getStatusIcon(docstringsStatus)} ${getStatusText(docstringsStatus)} |
+          
+          <details>
+          <summary>View Details</summary>
+          
+          ### Linting Results
+          - **flake8**: Code style and syntax checking
+          - **black**: Code formatting
+          - **isort**: Import sorting
+          - **pydocstyle**: Docstring style checking
+          - **mypy**: Type checking
+          - **docstrings**: Function docstring validation
+          
+          </details>
+          
+          *Pushed by @${{ github.actor }}*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Fail job if any checks failed
+      if: steps.overall.outcome == 'failure'
+      run: |
+        echo "❌ Job failed due to linting errors. See PR comment for details."
+        exit 1
