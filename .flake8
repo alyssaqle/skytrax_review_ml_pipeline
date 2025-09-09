@@ -11,6 +11,6 @@ exclude =
     build,
     dist
 ignore = 
-    E203,  # whitespace before ':'
-    W503,  # line break before binary operator
-    E501   # line too long (handled by black)
+    E203,
+    W503,
+    E501
