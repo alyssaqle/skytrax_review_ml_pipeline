@@ -96,6 +96,7 @@ jobs:
       continue-on-error: true
     
     - name: Check overall results
+      id: overall
       run: |
         echo "## Linting Results Summary" >> $GITHUB_STEP_SUMMARY
         echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
@@ -119,6 +120,7 @@ jobs:
         else
           echo "✅ All linting checks passed!"
         fi
+      continue-on-error: true
     
     - name: Post PR comment
       if: github.event_name == 'pull_request'
@@ -131,6 +133,7 @@ jobs:
           const pydocstyleStatus = '${{ steps.pydocstyle.outcome }}';
           const mypyStatus = '${{ steps.mypy.outcome }}';
           const docstringsStatus = '${{ steps.docstrings.outcome }}';
+          const overallStatus = '${{ steps.overall.outcome }}';
           
           const getStatusIcon = (status) => {
             if (status === 'success') return '✅';
@@ -178,3 +181,9 @@ jobs:
             repo: context.repo.repo,
             body: comment
           });
+    
+    - name: Fail job if any checks failed
+      if: steps.overall.outcome == 'failure'
+      run: |
+        echo "❌ Job failed due to linting errors. See PR comment for details."
+        exit 1
