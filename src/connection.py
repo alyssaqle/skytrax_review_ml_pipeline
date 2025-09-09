@@ -10,10 +10,10 @@ def get_session():
         "account": os.getenv("SNOWFLAKE_ACCOUNT"),
         "user": os.getenv("SNOWFLAKE_USER"),
         "password": os.getenv("SNOWFLAKE_PASSWORD"),
-        "role": os.getenv("SNOWFLAKE_ROLE", "ANALYST"),
-        "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
-        "database": os.getenv("SNOWFLAKE_DATABASE", "SKYTRAX_REVIEWS_DB"),
-        "schema": os.getenv("SNOWFLAKE_SCHEMA", "MARTS"),
+        "role": os.getenv("SNOWFLAKE_ROLE"),
+        "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+        "database": os.getenv("SNOWFLAKE_DATABASE"),
+        "schema": os.getenv("SNOWFLAKE_SCHEMA"),
     }
     return Session.builder.configs(params).create()
 
