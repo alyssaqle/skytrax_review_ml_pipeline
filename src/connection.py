@@ -1,9 +1,11 @@
 # handles Snowflake connection/session
 import os
-from snowflake.snowpark import Session
+
 from dotenv import load_dotenv
+from snowflake.snowpark import Session
 
 load_dotenv()  # reads .env file
+
 
 def get_session():
     params = {
@@ -16,7 +18,3 @@ def get_session():
         "schema": os.getenv("SNOWFLAKE_SCHEMA"),
     }
     return Session.builder.configs(params).create()
-
-
-
- 
