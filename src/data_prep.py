@@ -1,1 +1,2 @@
-# Snowpark DataFrame transformations
+
+"""Snowpark DataFrame transformations for the Skytrax review ML pipeline."""

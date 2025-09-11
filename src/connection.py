@@ -1,13 +1,20 @@
-# handles Snowflake connection/session
-import os
 
+"""Connection utilities for the Skytrax review ML pipeline."""
+
+import os
 from dotenv import load_dotenv
 from snowflake.snowpark import Session
 
 load_dotenv()  # reads .env file
 
+def get_session() -> Session:
+    """Create and return a Snowflake Snowpark Session using environment variables.
 
-def get_session():
+    Reads connection parameters from environment variables (typically loaded from a .env file).
+
+    Returns:
+        Session: An active Snowflake Snowpark Session object.
+    """
     params = {
         "account": os.getenv("SNOWFLAKE_ACCOUNT"),
         "user": os.getenv("SNOWFLAKE_USER"),

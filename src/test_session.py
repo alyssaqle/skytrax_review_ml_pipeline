@@ -1,11 +1,22 @@
 import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.connection import get_session
 
+"""Test script for establishing a Snowflake session and running a sample query.
 
+This script connects to Snowflake using the get_session utility and runs a test query to verify the connection.
+"""
+
+import os
+import sys
+
+
+from src.connection import get_session
 def main():
+    """Establish a Snowflake session and run a sample query.
+
+    Connects to Snowflake using get_session and prints the result of a test query.
+    If the sample table does not exist, prints an error message.
+    """
     s = get_session()
     print(s.sql("select current_user(), current_role(), current_warehouse()").collect())
     # sanity query (adjust table name if needed)
