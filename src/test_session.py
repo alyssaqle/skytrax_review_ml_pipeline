@@ -1,16 +1,11 @@
-import os
-from src.connection import get_session
-
 """Test script for establishing a Snowflake session and running a sample query.
 
 This script connects to Snowflake using the get_session utility and runs a test query to verify the connection.
 """
 
-import os
-import sys
-
-
 from src.connection import get_session
+
+
 def main():
     """Establish a Snowflake session and run a sample query.
 

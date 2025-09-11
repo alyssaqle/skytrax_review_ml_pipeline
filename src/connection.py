@@ -1,11 +1,12 @@
-
 """Connection utilities for the Skytrax review ML pipeline."""
 
 import os
+
 from dotenv import load_dotenv
 from snowflake.snowpark import Session
 
 load_dotenv()  # reads .env file
+
 
 def get_session() -> Session:
     """Create and return a Snowflake Snowpark Session using environment variables.
