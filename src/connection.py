@@ -25,4 +25,5 @@ def get_session() -> Session:
         "database": os.getenv("SNOWFLAKE_DATABASE"),
         "schema": os.getenv("SNOWFLAKE_SCHEMA"),
     }
-    return Session.builder.configs(params).create()
+    session: Session = Session.builder.configs(params).create()
+    return session

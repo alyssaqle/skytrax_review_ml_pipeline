@@ -6,7 +6,7 @@ This script connects to Snowflake using the get_session utility and runs a test 
 from src.connection import get_session
 
 
-def main():
+def main() -> None:
     """Establish a Snowflake session and run a sample query.
 
     Connects to Snowflake using get_session and prints the result of a test query.
@@ -22,6 +22,12 @@ def main():
         print(rows)
     except Exception as e:
         print("Connected, but sample table not found:", e)
+
+
+def test_get_session() -> None:
+    """Unit test for get_session: checks that a Session object is returned."""
+    s = get_session()
+    assert s is not None
 
 
 if __name__ == "__main__":
