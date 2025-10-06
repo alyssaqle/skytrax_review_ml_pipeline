@@ -1,0 +1,35 @@
+# config/cfg.py
+"""Configuration variables for the Skytrax review ML pipeline."""
+
+# Main fact table in Snowflake
+FACT_TABLE = "FCT_REVIEW_ENRICHED"
+
+# Column groupings
+NUMERIC_COLS = [
+    "SEAT_COMFORT",
+    "CABIN_STAFF_SERVICE",
+    "FOOD_AND_BEVERAGES",
+    "INFLIGHT_ENTERTAINMENT",
+    "GROUND_SERVICE",
+    "WIFI_AND_CONNECTIVITY",
+    "VALUE_FOR_MONEY",
+    "AVERAGE_RATING",
+]
+
+CATEGORICAL_COLS = ["SEAT_TYPE", "TYPE_OF_TRAVELLER", "RATING_BAND", "AIRLINE"]
+
+# Targets
+TARGET_COL = "RECOMMENDED"
+TARGET_REG = "VALUE_FOR_MONEY"
+
+# Identifier columns
+ID_COLS = [
+    "REVIEW_ID",
+    "CUSTOMER_ID",
+    "DATE_SUBMITTED_ID",
+    "DATE_FLOWN_ID",
+    "ORIGIN_LOCATION_ID",
+    "DESTINATION_LOCATION_ID",
+    "TRANSIT_LOCATION_ID",
+    "AIRCRAFT_ID",
+]
