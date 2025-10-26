@@ -39,6 +39,8 @@ The ultimate goal is to help airlines **improve service quality** and **boost cu
   - Logistic Regression  
   - Random Forest Classifier  
   - XGBoost Classifier  
+  - CatBoost Classifier
+  - LightBM
 - **Evaluation Metrics:** Accuracy, Precision, Recall, F1-score, ROC AUC, Average Precision  
 - Used **5-fold Stratified Cross-Validation** for model robustness.
 
@@ -51,39 +53,23 @@ The ultimate goal is to help airlines **improve service quality** and **boost cu
 | ROC AUC | 0.988 | 0.987 |
 | Average Precision | 0.978 | 0.977 |
 
-**Best Model:** 🏆 *Random Forest Classifier*  
-→ `max_depth=10`, `min_samples_leaf=3`, `n_estimators=500`
+**Best Model:** 🏆 *CatBoost Classifier*  
+→ `clf__depth=4`, `clf__iterations=400`
 
 ---
 
 ### 📈 Key Visualizations
 - ✅ **Confusion Matrix** — balanced performance across classes  
-<p align="center">
-  <img src="images/confusion_matrix.png" alt="Confusion Matrix" width="450">
-  <br>
-  <em>Balanced classification performance across both classes.</em>
-</p>
+![alt text](image.png)
 
 - 🧭 **ROC Curve (AUC = 0.99)** — near-perfect discrimination  
-<p align="center">
-  <img src="images/roc_curve.png" alt="ROC Curve" width="450">
-  <br>
-  <em>ROC AUC = 0.99 — near-perfect model discrimination.</em>
-</p>
+![alt text](image-1.png)
 
 - 📊 **Precision–Recall Curve (AP = 0.98)** — strong precision–recall balance  
-<p align="center">
-  <img src="images/precision_recall.png" alt="Precision Recall Curve" width="450">
-  <br>
-  <em>Average Precision = 0.98 — excellent precision–recall tradeoff.</em>
-</p>
+![alt text](image-2.png)
 
 - 💡 **Feature Importance** — interpretable business insights  
-<p align="center">
-  <img src="images/important_features.png" alt="Feature Importance" width="500">
-  <br>
-  <em>Top predictors for airline recommendation.</em>
-</p>
+![alt text](image-3.png)
 
 **Top 5 Predictors:**
 1. Value for Money  
@@ -105,6 +91,7 @@ The ultimate goal is to help airlines **improve service quality** and **boost cu
 - Linear Regression  
 - Random Forest Regressor  
 - XGBoost Regressor  
+- CatBoost Regressor
 
 **Evaluation Metrics:** RMSE, MAE, R² Score  
 
