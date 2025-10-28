@@ -60,16 +60,16 @@ The ultimate goal is to help airlines **improve service quality** and **boost cu
 
 ### 📈 Key Visualizations
 - ✅ **Confusion Matrix** — balanced performance across classes  
-![alt text](image.png)
+![alt text](images/image.png)
 
 - 🧭 **ROC Curve (AUC = 0.99)** — near-perfect discrimination  
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 
 - 📊 **Precision–Recall Curve (AP = 0.98)** — strong precision–recall balance  
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 
 - 💡 **Feature Importance** — interpretable business insights  
-![alt text](image-3.png)
+![alt text](images/image-3.png)
 
 **Top 5 Predictors:**
 1. Value for Money  
