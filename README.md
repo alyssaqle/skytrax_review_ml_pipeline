@@ -163,6 +163,7 @@ skytrax_review_ml_pipeline/
 │
 ├── notebooks/
 │   ├── exploration.ipynb
+|   ├── regression.ipynb
 │   └── classification.ipynb
 │
 ├── src/
