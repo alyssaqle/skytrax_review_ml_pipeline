@@ -4,7 +4,7 @@
 This project analyzes **Skytrax airline passenger reviews** to uncover the key factors influencing customer satisfaction and builds **machine learning models** to predict:
 
 1. **Whether a passenger would recommend the airline** *(Classification)*  
-2. **The overall rating or perceived value for money** *(Regression — coming soon)*
+2. **The overall rating or perceived value for money** *(Regression)*
 
 It combines **data cleaning**, **exploratory data analysis**, and **predictive modeling** in a **modular, reproducible pipeline**.  
 The ultimate goal is to help airlines **improve service quality** and **boost customer loyalty** through data-driven insights.
